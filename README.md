@@ -9,7 +9,7 @@ This is a multiple-function discord bot
 - pip install discord.py
 - pip install youtube_dl
 - pip install flask (if you wanna host bot on website monitoring)
-# If you want host bot normally, dont install flask, remove keep_alive.py from folder and dont import keep_alive in main file
 - pip install PyNaCl
+# If you want host bot normally, dont install flask, remove keep_alive.py from folder and dont import keep_alive in main file
 # You also have to install a FFMPEG on your PC and add it to path
 
