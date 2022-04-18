@@ -1,7 +1,7 @@
 # Discord ChadBot
 This is a multiple-function discord bot
 
-##General functions:
+#General functions:
 - Playing music on voice channels
 - Moderating chat (Soon)
 - Searching images in internet and posting them on text channel (Soon)
