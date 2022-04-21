@@ -2,8 +2,8 @@
 This is a multiple-function discord bot
 
 ## General functions:
-- Playing music on voice channels
-- Moderating chat (Soon)
+- Playing music on voice channels (Soon)
+- Moderating commands
 - Searching images in internet and posting them on text channel (Soon)
 # If you want to use the bot, you have to install following libraries:
 - pip install discord.py
