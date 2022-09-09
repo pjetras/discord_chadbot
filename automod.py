@@ -3,6 +3,7 @@ from nextcord.ext import commands
 from googleapiclient.discovery import build
 from nextcord import ButtonStyle, SlashOption, ButtonStyle, slash_command
 from nextcord.ui import Button, View
+import time
 # import random
 from datetime import datetime
 import sqlite3
@@ -25,18 +26,27 @@ class Automod(commands.Cog):
             choices={"ON":1, "OFF":0},
     ),
 ):
-        db = sqlite3.connect("database.db")
-        cursor = db.cursor()
-        cursor.execute("SELECT guild_id FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
-        data = cursor.fetchone()
-        if data is None:
-            cursor.execute("INSERT INTO automod(guild_id, toggle) VALUES(?, ?)", (ctx.user.guild.id, toggle))
+        if toggle == 1:
+            db = sqlite3.connect("database.db")
+            cursor = db.cursor()
+            cursor.execute("SELECT guild_id FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
+            data = cursor.fetchone()
+            if data is None:
+                cursor.execute("INSERT INTO automod(guild_id, toggle) VALUES(?, ?)", (ctx.user.guild.id, toggle))
+            else:
+                cursor.execute("UPDATE automod SET toggle = ? WHERE guild_id = ?", (toggle, ctx.user.guild.id))
+            await ctx.send('Automod setup completed', ephemeral=True)
+            db.commit()
+            cursor.close()
+            db.close()
         else:
-            cursor.execute("UPDATE automod SET toggle = ? WHERE guild_id = ?", (toggle, ctx.user.guild.id))
-        await ctx.send('automod toggle test', ephemeral=True)
-        db.commit()
-        cursor.close()
-        db.close()
+            db = sqlite3.connect("database.db")
+            cursor = db.cursor()
+            cursor.execute("DELETE FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
+            await ctx.send('Automod turned OFF', ephemeral=True)
+            db.commit()
+            cursor.close()
+            db.close()
     @commands.Cog.listener()
     async def on_message(self, message):
         db = sqlite3.connect("database.db")
@@ -49,10 +59,12 @@ class Automod(commands.Cog):
             toggle = data
         cursor.close()
         db.close()
-        blwords = ["test", "test2"]
+        blwords = ["nigger", "czarnuch", "pedał", "faggot"]
         if toggle == data:
             if message.content in blwords:
                 await message.delete()
-                await message.channel.send("You've typed a blacklisted keyword!!!")
+                msg = await message.channel.send(f"{message.author.mention}, You've typed a blacklisted keyword!!!")
+                time.sleep(5)
+                await msg.delete()
         else:
             pass
