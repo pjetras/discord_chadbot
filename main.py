@@ -8,7 +8,10 @@ from help import Help
 
 TOKEN = 'Your bot token here'
 # Importing commands from other files
-client = commands.Bot(command_prefix = 'Your bot prefix here')
+intents = nextcord.Intents.default()
+intents.members = True
+intents.message_content = True
+client = commands.Bot(command_prefix = 'Your bot prefix here', intents=intents)
 client.remove_command('help')
 client.add_cog(music_cog(client))
 client.add_cog(Mod(client))
