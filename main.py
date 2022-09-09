@@ -1,10 +1,9 @@
 import nextcord
 from nextcord.ext import commands
-import asyncio
-from keep_alive import keep_alive
 from music_cog import music_cog
 from mod import Mod
-from imgsrch import Img
+from utillity import Img, Avatar, Userinfo, Serverinfo, Roles
+from help import Help
 
 
 TOKEN = 'Your bot token here'
@@ -14,21 +13,14 @@ client.remove_command('help')
 client.add_cog(music_cog(client))
 client.add_cog(Mod(client))
 client.add_cog(Img(client))
+client.add_cog(Avatar(client))
+client.add_cog(Userinfo(client))
+client.add_cog(Serverinfo(client))
+client.add_cog(Roles(client))
 # Custom status
 @client.event
 async def on_ready():
-    statuses = ['You | -help', f'{len(client.guilds)} servers | -help']
-
-    while not client.is_closed():
-        status = random.choice(statuses)
-
-        await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name = status))
-
-        await asyncio.sleep(10)
-    client.loop.create_task(on_ready())
-    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name="Pornhub VR"))
-    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name =f'{len(client.guilds)} servers'))
-
+    await client.change_presence(activity=nextcord.Activity(type=nextcord.ActivityType.watching, name =f'{len(client.guilds)} servers | /help'))
 @client.event
 async def on_connect():
     print("Bot is on!")
