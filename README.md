@@ -4,6 +4,7 @@ This is a multiple-function discord bot
 ## General functions:
 - Playing music on voice channels (Soon)
 - Moderating commands
+- Automod (not finished in 100%)
 - A lot utillity commands
 - Advanced help command
 # If you want to use the bot, you have to install following libraries:
