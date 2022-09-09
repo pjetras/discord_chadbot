@@ -7,6 +7,7 @@ import time
 # import random
 from datetime import datetime
 import sqlite3
+import bad_words
 class Automod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -59,9 +60,9 @@ class Automod(commands.Cog):
             toggle = data
         cursor.close()
         db.close()
-        blwords = ["nigger", "czarnuch", "pedał", "faggot"]
+        
         if toggle == data:
-            if message.content in blwords:
+            if message.content in bad_words.blwords:
                 await message.delete()
                 msg = await message.channel.send(f"{message.author.mention}, You've typed a blacklisted keyword!!!")
                 time.sleep(5)
