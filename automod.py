@@ -27,27 +27,30 @@ class Automod(commands.Cog):
             choices={"ON":1, "OFF":0},
     ),
 ):
-        if toggle == 1:
-            db = sqlite3.connect("database.db")
-            cursor = db.cursor()
-            cursor.execute("SELECT guild_id FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
-            data = cursor.fetchone()
-            if data is None:
-                cursor.execute("INSERT INTO automod(guild_id, toggle) VALUES(?, ?)", (ctx.user.guild.id, toggle))
+        if ctx.user.guild_permissions.administrator:
+            if toggle == 1:
+                db = sqlite3.connect("database.db")
+                cursor = db.cursor()
+                cursor.execute("SELECT guild_id FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
+                data = cursor.fetchone()
+                if data is None:
+                    cursor.execute("INSERT INTO automod(guild_id, toggle) VALUES(?, ?)", (ctx.user.guild.id, toggle))
+                else:
+                    cursor.execute("UPDATE automod SET toggle = ? WHERE guild_id = ?", (toggle, ctx.user.guild.id))
+                await ctx.send('Automod turned ON', ephemeral=True)
+                db.commit()
+                cursor.close()
+                db.close()
             else:
-                cursor.execute("UPDATE automod SET toggle = ? WHERE guild_id = ?", (toggle, ctx.user.guild.id))
-            await ctx.send('Automod setup completed', ephemeral=True)
-            db.commit()
-            cursor.close()
-            db.close()
+                db = sqlite3.connect("database.db")
+                cursor = db.cursor()
+                cursor.execute("DELETE FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
+                await ctx.send('Automod turned OFF', ephemeral=True)
+                db.commit()
+                cursor.close()
+                db.close()
         else:
-            db = sqlite3.connect("database.db")
-            cursor = db.cursor()
-            cursor.execute("DELETE FROM automod WHERE guild_id = ?", (ctx.user.guild.id,))
-            await ctx.send('Automod turned OFF', ephemeral=True)
-            db.commit()
-            cursor.close()
-            db.close()
+            await ctx.response.send_message("You are not allowed to use this command.", ephemeral=True)
     @commands.Cog.listener()
     async def on_message(self, message):
         db = sqlite3.connect("database.db")
