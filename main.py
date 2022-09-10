@@ -22,6 +22,7 @@ client.add_cog(Userinfo(client))
 client.add_cog(Serverinfo(client))
 client.add_cog(Roles(client))
 client.add_cog(Automod(client))
+client.add_cog(Help(client))
 # Custom status
 @client.event
 async def on_ready():
