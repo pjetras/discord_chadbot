@@ -65,10 +65,11 @@ class Automod(commands.Cog):
         db.close()
         
         if toggle == data:
-            if message.content in bad_words.blwords:
-                await message.delete()
-                msg = await message.channel.send(f"{message.author.mention}, You've typed a blacklisted keyword!!!")
-                time.sleep(5)
-                await msg.delete()
+            for word in bad_words.blwords:
+                if word in message.content:
+                    await message.delete()
+                    res = await message.channel.send(f"{message.author.mention}, You've typed a blacklisted keyword!!!")
+                    time.sleep(5)
+                    await res.delete()
         else:
             pass
