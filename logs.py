@@ -81,11 +81,12 @@ class Logs(commands.Cog):
             cursor.execute("SELECT channel_id FROM logs WHERE guild_id = ?", (message.guild.id,))
             result = cursor.fetchone()
             if result:
-                result = int(result)
-                log_channel = self.bot.get_channel(result)
+                # result = int(result)
+                log_channel = self.bot.get_channel(result[0])
                 embed = nextcord.Embed(description = ":wastebasket: **Message sent by** "+f"**{message.author.mention}**"+" **was deleted on channel ** "+f"**{message.channel.mention}**",colour=0xed0000, timestamp=datetime.utcnow())
                 embed.set_author(name = message.author.name+"#"+message.author.discriminator)
                 embed.add_field(name = 'Message deleted', value = f"{message.content}", inline = False)
                 await log_channel.send(embed=embed)
+                # await print(type(log_channel))
             else:
                 pass
