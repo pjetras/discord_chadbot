@@ -8,7 +8,6 @@ from datetime import datetime
 class Logs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
     @commands.Cog.listener()
     async def on_ready(self):
         db = sqlite3.connect('database.db')
@@ -81,12 +80,38 @@ class Logs(commands.Cog):
             cursor.execute("SELECT channel_id FROM logs WHERE guild_id = ?", (message.guild.id,))
             result = cursor.fetchone()
             if result:
-                # result = int(result)
                 log_channel = self.bot.get_channel(result[0])
                 embed = nextcord.Embed(description = ":wastebasket: **Message sent by** "+f"**{message.author.mention}**"+" **was deleted on channel ** "+f"**{message.channel.mention}**",colour=0xed0000, timestamp=datetime.utcnow())
                 embed.set_author(name = message.author.name+"#"+message.author.discriminator)
-                embed.add_field(name = 'Message deleted', value = f"{message.content}", inline = False)
+                embed.add_field(name = 'Message deleted', value = f"```{message.content}```", inline = False)
+                embed.set_footer(icon_url = self.bot.user.avatar, text = 'ChadBot')
                 await log_channel.send(embed=embed)
-                # await print(type(log_channel))
+            else:
+                pass
+    @commands.Cog.listener()
+    async def on_message_edit(self, before, after):
+        db = sqlite3.connect('database.db')
+        cursor = db.cursor()
+        cursor.execute('SELECT toggle FROM logs WHERE guild_id = ?', (before.guild.id,))
+        data = cursor.fetchone()
+        if data:
+            toggle = data
+        else:
+            toggle = 0
+        cursor.close()
+        db.close()
+        if toggle == data:
+            db = sqlite3.connect('database.db')
+            cursor = db.cursor()
+            cursor.execute("SELECT channel_id FROM logs WHERE guild_id = ?", (before.guild.id,))
+            result = cursor.fetchone()
+            if result:
+                log_channel = self.bot.get_channel(result[0])
+                embed = nextcord.Embed(description = ":pencil2: **Message sent by** "+f"**{before.author.mention}**"+" **was edited on channel ** "+f"**{before.channel.mention}**", colour=0xed0000, timestamp=datetime.utcnow())
+                embed.set_author(name = after.author.name+"#"+after.author.discriminator)
+                embed.add_field(name = 'Message before', value = f"```{before.content}```", inline = False)
+                embed.add_field(name = 'Message after', value = f"```{after.content}```", inline = False)
+                embed.set_footer(icon_url = self.bot.user.avatar, text = 'ChadBot')
+                await log_channel.send(embed=embed)
             else:
                 pass
