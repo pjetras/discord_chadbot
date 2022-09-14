@@ -5,6 +5,7 @@ from mod import Mod
 from utillity import Img, Avatar, Userinfo, Serverinfo, Roles
 from help import Help
 from automod import Automod
+from logs import Logs
 
 
 TOKEN = 'Your bot token here'
