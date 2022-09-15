@@ -82,7 +82,7 @@ class Logs(commands.Cog):
             if result:
                 log_channel = self.bot.get_channel(result[0])
                 embed = nextcord.Embed(description = ":wastebasket: **Message sent by** "+f"**{message.author.mention}**"+" **was deleted on channel ** "+f"**{message.channel.mention}**",colour=0xed0000, timestamp=datetime.utcnow())
-                embed.set_author(name = message.author.name+"#"+message.author.discriminator)
+                embed.set_author(icon_url = message.author.avatar.url, name = message.author.name+"#"+message.author.discriminator)
                 embed.add_field(name = 'Message deleted', value = f"```{message.content}```", inline = False)
                 embed.set_footer(icon_url = self.bot.user.avatar, text = 'ChadBot')
                 await log_channel.send(embed=embed)
@@ -108,9 +108,63 @@ class Logs(commands.Cog):
             if result:
                 log_channel = self.bot.get_channel(result[0])
                 embed = nextcord.Embed(description = ":pencil2: **Message sent by** "+f"**{before.author.mention}**"+" **was edited on channel ** "+f"**{before.channel.mention}**", colour=0xed0000, timestamp=datetime.utcnow())
-                embed.set_author(name = after.author.name+"#"+after.author.discriminator)
+                embed.set_author(icon_url = after.author.avatar.url, name = after.author.name+"#"+after.author.discriminator)
                 embed.add_field(name = 'Message before', value = f"```{before.content}```", inline = False)
                 embed.add_field(name = 'Message after', value = f"```{after.content}```", inline = False)
+                embed.set_footer(icon_url = self.bot.user.avatar, text = 'ChadBot')
+                await log_channel.send(embed=embed)
+            else:
+                pass
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        db = sqlite3.connect('database.db')
+        cursor = db.cursor()
+        cursor.execute('SELECT toggle FROM logs WHERE guild_id = ?', (member.guild.id,))
+        data = cursor.fetchone()
+        if data:
+            toggle = data
+        else:
+            toggle = 0
+        cursor.close()
+        db.close()
+        if toggle == data:
+            db = sqlite3.connect('database.db')
+            cursor = db.cursor()
+            cursor.execute("SELECT channel_id FROM logs WHERE guild_id = ?", (member.guild.id,))
+            result = cursor.fetchone()
+            if result:
+                log_channel = self.bot.get_channel(result[0])
+                embed = nextcord.Embed(description = ":airplane: **User ** "+f"**{member.mention}**"+" **has joined the ** "+f"**{member.guild.name} **" + "server", colour=0xed0000, timestamp=datetime.utcnow())
+                embed.set_author(icon_url = member.avatar.url, name = member.name+"#"+member.discriminator)
+                embed.set_thumbnail(url = member.avatar.url)
+                embed.add_field(name = 'User ID', value = member.id, inline = False)
+                embed.set_footer(icon_url = self.bot.user.avatar, text = 'ChadBot')
+                await log_channel.send(embed=embed)
+            else:
+                pass
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        db = sqlite3.connect('database.db')
+        cursor = db.cursor()
+        cursor.execute('SELECT toggle FROM logs WHERE guild_id = ?', (member.guild.id,))
+        data = cursor.fetchone()
+        if data:
+            toggle = data
+        else:
+            toggle = 0
+        cursor.close()
+        db.close()
+        if toggle == data:
+            db = sqlite3.connect('database.db')
+            cursor = db.cursor()
+            cursor.execute("SELECT channel_id FROM logs WHERE guild_id = ?", (member.guild.id,))
+            result = cursor.fetchone()
+            if result:
+                log_channel = self.bot.get_channel(result[0])
+                embed = nextcord.Embed(description = ":airplane: **User ** "+f"**{member.mention}**"+" **has left the ** "+f"**{member.guild.name} **" + "server", colour=0xed0000, timestamp=datetime.utcnow())
+                embed.set_author(icon_url = member.avatar.url, name = member.name+"#"+member.discriminator)
+                embed.set_thumbnail(url = member.avatar.url)
+                embed.add_field(name = 'User ID', value = member.id, inline = False)
                 embed.set_footer(icon_url = self.bot.user.avatar, text = 'ChadBot')
                 await log_channel.send(embed=embed)
             else:
